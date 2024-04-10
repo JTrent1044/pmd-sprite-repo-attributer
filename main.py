@@ -20,6 +20,12 @@ def scroll_shim(passed_in_driver, object):
     )
     passed_in_driver.execute_script(scroll_by_coord)
 
+#The program sometimes runs too fast for its own good. Make it try again if it can't find the popup.
+def move_to_popup_and_get_authors(driver,popup):
+    ActionChains(driver).move_to_element(popup).perform()
+    popup = WebDriverWait(driver,10,ignored_exceptions=IGNORED_EXCEPTIONS).until(EC.presence_of_element_located((By.XPATH,"//div[contains(concat(' ', @class, ' '), ' MuiTooltip-popper ')]/div")))
+    return [el.get_attribute("innerHTML") for el in popup.find_elements(By.XPATH,".//div/div/a")]
+
 #Get attributions for portraits of a certain mon-form combination
 def get_portrait_attributions(driver,pokemon_name="",pokemon_form_name=""): #Don't call this on its own.
 
@@ -40,9 +46,12 @@ def get_portrait_attributions(driver,pokemon_name="",pokemon_form_name=""): #Don
     for portrait in portrait_objects:
         portrait_name = portrait.find_element(By.XPATH, ".//p").get_attribute("innerHTML")
         portrait_hover = portrait.find_element(By.XPATH, ".//*[name()='svg']")
-        ActionChains(driver).move_to_element(portrait_hover).perform()
-        popup = WebDriverWait(driver,10,ignored_exceptions=IGNORED_EXCEPTIONS).until(EC.presence_of_element_located((By.XPATH,"//div[contains(concat(' ', @class, ' '), ' MuiTooltip-popper ')]/div")))
-        portrait_authors = [el.get_attribute("innerHTML") for el in popup.find_elements(By.XPATH,".//div/div/a")]
+        for _ in range(10):
+            try:
+                portrait_authors = move_to_popup_and_get_authors(driver,portrait_hover)
+                break
+            except StaleElementReferenceException:
+                print("pass failed with StaleElementReferenceException")
         if "CHUNSOFT" in portrait_authors: portrait_authors = ["CHUNSOFT"]
         portraits.append([portrait_name,portrait_authors])
 
@@ -67,9 +76,12 @@ def get_sprite_attributions(driver,pokemon_name="",pokemon_form_name=""): #Don't
         sprite_name = sprite.find_element(By.XPATH, ".//p").get_attribute("innerHTML")
         sprite_hover = sprite.find_element(By.XPATH, ".//*[name()='svg']")
         scroll_shim(driver,sprite_hover) #Fix MoveTargetOutOfBoundsException
-        ActionChains(driver).move_to_element(sprite_hover).perform()
-        popup = WebDriverWait(driver,10,ignored_exceptions=IGNORED_EXCEPTIONS).until(EC.presence_of_element_located((By.XPATH,"//div[contains(concat(' ', @class, ' '), ' MuiTooltip-popper ')]/div")))
-        sprite_authors = [el.get_attribute("innerHTML") for el in popup.find_elements(By.XPATH,".//div/div/a")]
+        for _ in range(10):
+            try:
+                sprite_authors = move_to_popup_and_get_authors(driver,sprite_hover)
+                break
+            except StaleElementReferenceException:
+                print("pass failed with StaleElementReferenceException")
         if "CHUNSOFT" in sprite_authors: sprite_authors = ["CHUNSOFT"]
         sprites.append([sprite_name,sprite_authors])
 
@@ -129,7 +141,7 @@ def get_pokemon_attributions_from_dex_number_and_form(driver,mon_number,form): #
 
 if __name__ == "__main__":
     try:
-        os.environ['MOZ_HEADLESS'] = '1'
+        #os.environ['MOZ_HEADLESS'] = '1'
         driver = webdriver.Firefox()
 
         with open("input.txt",encoding="utf-8") as file:
