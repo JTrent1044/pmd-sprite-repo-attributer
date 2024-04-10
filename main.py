@@ -141,7 +141,7 @@ def get_pokemon_attributions_from_dex_number_and_form(driver,mon_number,form): #
 
 if __name__ == "__main__":
     try:
-        #os.environ['MOZ_HEADLESS'] = '1'
+        os.environ['MOZ_HEADLESS'] = '1'
         driver = webdriver.Firefox()
 
         with open("input.txt",encoding="utf-8") as file:
