@@ -1,5 +1,4 @@
 import sys, os
-from tqdm import tqdm
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException,StaleElementReferenceException
@@ -34,7 +33,7 @@ def get_portrait_attributions(driver,pokemon_name="",pokemon_form_name=""): #Don
 
     try:
         driver.find_element(By.XPATH,portraits_path+"/h5")
-        print(f"No portraits in Repo for {pokemon_name} {pokemon_form_name}.",file=sys.stderr)
+        print(f"warn: No portraits in Repo for {pokemon_name} {pokemon_form_name}.",file=sys.stderr)
         return ""
     except NoSuchElementException:
         #We don't actually need to do anything here because if this element doesn't exist, good.
@@ -51,7 +50,7 @@ def get_portrait_attributions(driver,pokemon_name="",pokemon_form_name=""): #Don
                 portrait_authors = move_to_popup_and_get_authors(driver,portrait_hover)
                 break
             except StaleElementReferenceException:
-                print("pass failed with StaleElementReferenceException")
+                print("warn: Pass failed with StaleElementReferenceException")
         if "CHUNSOFT" in portrait_authors: portrait_authors = ["CHUNSOFT"]
         portraits.append([portrait_name,portrait_authors])
 
@@ -64,7 +63,7 @@ def get_sprite_attributions(driver,pokemon_name="",pokemon_form_name=""): #Don't
     assert driver.find_element(By.XPATH,sprites_path+"/div/div/h5").get_attribute("innerHTML") == "Sprites", "Pathing to sprites failed."
     try:
         driver.find_element(By.XPATH,sprites_path+"/h6")
-        print(f"No sprites in Repo for {pokemon_name} {pokemon_form_name}.",file=sys.stderr)
+        print(f"warn: No sprites in Repo for {pokemon_name} {pokemon_form_name}.",file=sys.stderr)
         return ''
     except NoSuchElementException:
         #We don't actually need to do anything here because if this element doesn't exist, good.
@@ -81,7 +80,7 @@ def get_sprite_attributions(driver,pokemon_name="",pokemon_form_name=""): #Don't
                 sprite_authors = move_to_popup_and_get_authors(driver,sprite_hover)
                 break
             except StaleElementReferenceException:
-                print("pass failed with StaleElementReferenceException")
+                print("warn: pass failed with StaleElementReferenceException")
         if "CHUNSOFT" in sprite_authors: sprite_authors = ["CHUNSOFT"]
         sprites.append([sprite_name,sprite_authors])
 
@@ -95,7 +94,7 @@ def get_pokemon_attributions_from_dex_number_and_form(driver,mon_number,form): #
 
     try:
         driver.find_element(By.XPATH,"//div[@id='root']/div/h1")
-        print(f"Pokemon with dex number {mon_number} does not exist in repo.",file=sys.stderr)
+        print(f"warn: Pokemon with dex number {mon_number} does not exist in repo.",file=sys.stderr)
         return ''
     except NoSuchElementException:
         #We don't actually need to do anything here because if this element doesn't exist, good.
@@ -124,7 +123,9 @@ def get_pokemon_attributions_from_dex_number_and_form(driver,mon_number,form): #
     assert form == pokemon_form_name.lower(), "Pokemon form in repo not equivalent to entered Pokemon form."
     assert mon_number in pokemon_name, "Pokedex number in repo not equivalent to entered Pokedex number."
 
+    print(f"- Getting portrait attributions for {mon_number} {form}.")
     portraits = get_portrait_attributions(driver,pokemon_name,pokemon_form_name)
+    print(f"- Getting sprite attributions for {mon_number} {form}.")
     sprites = get_sprite_attributions(driver,pokemon_name,pokemon_form_name)
 
     portrait_attributions = []
@@ -141,16 +142,22 @@ def get_pokemon_attributions_from_dex_number_and_form(driver,mon_number,form): #
 
 if __name__ == "__main__":
     try:
+        print("Initializing Driver.")
         os.environ['MOZ_HEADLESS'] = '1'
         driver = webdriver.Firefox()
+        print("Driver initialized.")
 
         with open("input.txt",encoding="utf-8") as file:
             mons = [(l[0].rjust(4,"0"),'normal' if len(l)==1 else l[1].lower().strip()) for l in [l.split(",") for l in file.read().splitlines()]]
+        print("Reading input.")
         
+        num_mons = len(mons)
         attributions = ""
-        for mon, form in tqdm(mons):
+        for i, (mon, form) in enumerate(mons):
+            print(f"Starting attribution for {mon} {form} ({i}/{num_mons}).")
             attributions += get_pokemon_attributions_from_dex_number_and_form(driver,mon,form) + "\n"
         
+        print("Attributions gathered. Writing to file.")
         with open("output.txt",mode="w",encoding="utf-8") as file:
             file.write(attributions)
         driver.quit()

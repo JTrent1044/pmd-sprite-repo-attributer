@@ -8,7 +8,7 @@ This is a small program to properly attribute portraits and sprites from the [PM
 - Requires [Gecko Driver](https://github.com/mozilla/geckodriver/releases) for Selenium, which should be placed in a folder along your PATH.
   - If you don't know what that means, put it in the same folder as your python installation, which for Windows, defaults to `%localappdata%\Programs\Python\Python312`.
 - Then download these files on your computer and put them somewhere convenient.
-- Either double-click `setup.bat`, or in a terminal window run the command `py -m pip install selenium tqdm`.
+- Either double-click `setup.bat`, or in a terminal window run the command `py -m pip install selenium`.
 
 ## Usage:
 Create, in the same folder as the program, a text file called `input.txt`.  

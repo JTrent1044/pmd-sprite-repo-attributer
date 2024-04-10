@@ -1,1 +1,1 @@
-py -m pip install selenium tqdm
+py -m pip install selenium
