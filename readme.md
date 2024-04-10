@@ -17,10 +17,12 @@ If you want to have attributed a form for a Pokémon that is not "Normal", add t
 
 Leading zeros do not matter in the Natdex number, nor does capitalization matter for the form name.
 
+**Input Example 1:**  
 I want the attributions for Beedrill, thus my `input.txt` would have:
 ```
 15
 ```
+**Input Example 2:**  
 I want the attributions for Starter Shiny Machop, and Female Sneasel. My `input.txt` would have:
 ```
 066,starter shiny
