@@ -30,7 +30,7 @@ I want the attributions for Starter Shiny Machop, and Female Sneasel. My `input.
 ```
 
 Double-click the file `main.py` to run it, or enter the command `py .\main.py` in a terminal window opened to the folder holding the program.  
-Wait for it to complete. Afterwards, fully-qualified attributions for each portrait and sprite of the Pokémon you listed will be in the file `output.txt` in the folder holding the program.
+Wait for it to complete and for the terminal window to close on its own. Do not close the terminal window yourself. Afterwards, fully-qualified attributions for each portrait and sprite of the Pokémon you listed will be in the file `output.txt` in the folder holding the program.
 
 ## Troubleshooting:
 This hasn't been exhastively tested, and I wrote it over something like 8 hours while mildly sleep deprived. It might break.

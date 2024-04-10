@@ -118,12 +118,12 @@ def get_pokemon_attributions_from_dex_number_and_form(driver,mon_number,form): #
     portrait_attributions = []
     for portrait_name,authors in portraits:
         authors = ", ".join(set(authors))
-        portrait_attributions.append(f"{pokemon_name} {pokemon_form_name} {portrait_name} by {authors}, {"licensed under a proprietary license." if authors == "CHUNSOFT" else "licensed under CC-BY-NC-4.0."}")
+        portrait_attributions.append(f"{pokemon_name} {pokemon_form_name} {portrait_name} by {authors}, {'licensed under a proprietary license.' if authors == 'CHUNSOFT' else 'licensed under CC-BY-NC-4.0.'}")
 
     sprite_attributions = []
     for sprite_name,authors in sprites:
         authors = ", ".join(set(authors))
-        sprite_attributions.append(f"{pokemon_name} {pokemon_form_name} {sprite_name} by {authors}, {"licensed under a proprietary license." if authors == "CHUNSOFT" else "licensed under CC-BY-NC-4.0."}")
+        sprite_attributions.append(f"{pokemon_name} {pokemon_form_name} {sprite_name} by {authors}, {'licensed under a proprietary license.' if authors == 'CHUNSOFT' else 'licensed under CC-BY-NC-4.0.'}")
 
     return "\n".join(portrait_attributions+sprite_attributions)
 
